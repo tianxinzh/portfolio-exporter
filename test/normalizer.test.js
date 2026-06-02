@@ -54,9 +54,10 @@ test('crypto: merge, ignore empty response, carry currency_pair_id', () => {
   assert.equal(rows.find((r) => r.symbol === 'ETH').avg_cost, 2000);
 });
 
-test('cash: settled cash from accounts/ becomes a CASH position (amount @ $1)', () => {
+test('cash: uses portfolio_cash (total, incl unsettled) — not settled `cash` — as a CASH position @ $1', () => {
   const { rows, counts } = normalize(accountCaptures);
   assert.equal(counts.cash, 1);
+  // fixture: cash 4000 (settled) vs portfolio_cash 5000 (total). Must pick 5000.
   assert.deepEqual(rows.find((r) => r.type === 'cash'), {
     symbol: 'CASH', account: 'rh-main', type: 'cash', direction: 'long',
     quantity: 5000, avg_cost: 1, last_price: 1, market_value: 5000, unrealized_pnl: 0, multiplier: 1,

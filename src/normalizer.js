@@ -151,7 +151,8 @@ function normalizeCash(captures) {
   for (const c of captures) {
     if (!isAccounts(c.url) || !c || !c.body || !Array.isArray(c.body.results)) continue;
     for (const a of c.body.results) {
-      const v = num(a.cash != null ? a.cash : a.portfolio_cash);
+      // portfolio_cash = total account cash (settled + unsettled) — what RH shows as "Cash".
+      const v = num(a.portfolio_cash != null ? a.portfolio_cash : a.cash);
       if (v == null) continue;
       byAccount.set(a.account_number || a.account_id || a.url || 'default', v);
     }

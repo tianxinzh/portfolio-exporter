@@ -49,6 +49,6 @@ export const cryptoCaptures = [
 
 export const accountCaptures = [
   { url: 'https://api.robinhood.com/accounts/?default_to_all_accounts=true', body: { results: [
-    { account_number: ACCT, cash: '5000.0000', portfolio_cash: '5000.0000', unsettled_funds: '0.0000', buying_power: '20000.0000' },
+    { account_number: ACCT, cash: '4000.0000', portfolio_cash: '5000.0000', unsettled_funds: '1000.0000', buying_power: '20000.0000' },
   ] } },
 ];
