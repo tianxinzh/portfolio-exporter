@@ -2,33 +2,29 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <style>
-      body { font: 13px system-ui, sans-serif; width: 300px; padding: 12px; }
-      h1 { font-size: 14px; margin: 0 0 8px; }
-      #counts { margin: 6px 0; color: #222; }
-      #status { margin: 6px 0; color: #a00; min-height: 1em; }
-      .row { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
-      select, button { font-size: 13px; padding: 6px; }
-      button { flex: 1; }
-      a { font-size: 12px; color: #06c; cursor: pointer; }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <h1>Portfolio Exporter</h1>
-    <div id="counts">Loading…</div>
-    <div id="status"></div>
-    <div class="row">
-      <label for="format">Format</label>
-      <select id="format">
-        <option value="csv">CSV</option>
-        <option value="json">JSON</option>
-        <option value="yaml">YAML</option>
-      </select>
+  <body class="popup">
+    <div class="pe-header">
+      <img src="../icons/icon32.png" width="22" height="22" alt="" />
+      <h1>Portfolio Exporter</h1>
     </div>
-    <div class="row">
-      <button id="download" disabled>Download holdings</button>
+    <div class="pe-body">
+      <div id="empty" class="hint" style="display:none"></div>
+      <div id="dash">
+        <div class="pe-label">Total value</div>
+        <div class="pe-total" id="total">—</div>
+        <div class="pe-rows" id="rows"></div>
+        <div class="seg" id="seg">
+          <button type="button" data-f="csv">CSV</button>
+          <button type="button" data-f="json">JSON</button>
+          <button type="button" data-f="yaml">YAML</button>
+        </div>
+        <button class="btn" id="download" disabled>Download holdings</button>
+      </div>
+      <div id="status" class="pe-status"></div>
+      <button class="link" id="options" type="button">⚙ Settings</button>
     </div>
-    <a id="options">Settings (presets, filters, account)…</a>
     <script type="module" src="popup.js"></script>
   </body>
 </html>
