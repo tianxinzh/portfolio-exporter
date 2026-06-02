@@ -1,6 +1,7 @@
 import { normalize } from './normalizer.js';
 import { enrich } from './enrich.js';
 import { render } from './formatters.js';
+import { getCaptures } from './captures.js';
 import { loadSettings, saveSettings, DEFAULTS } from './settings.js';
 
 const els = {
@@ -38,14 +39,9 @@ function fill(s) {
 }
 
 async function captureRows() {
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const resp = await chrome.tabs.sendMessage(tab.id, { type: 'rh-get-captures' });
-    const captures = (resp && resp.captures) || [];
-    return enrich(normalize(captures).rows, captures);
-  } catch {
-    return null;
-  }
+  const captures = await getCaptures();
+  if (captures.length === 0) return null;
+  return enrich(normalize(captures).rows, captures);
 }
 
 async function refresh() {
@@ -53,7 +49,7 @@ async function refresh() {
   await saveSettings(s);
   const rows = await captureRows();
   if (!rows) {
-    els.previewStatus.textContent = 'No Robinhood tab found — open robinhood.com (and reload it) to preview your real data.';
+    els.previewStatus.textContent = 'Open robinhood.com in another tab (and reload it) to preview your real data.';
     els.preview.textContent = '';
     return;
   }

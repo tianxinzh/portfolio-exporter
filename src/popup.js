@@ -2,6 +2,7 @@ import { normalize } from './normalizer.js';
 import { enrich } from './enrich.js';
 import { render } from './formatters.js';
 import { summarize } from './summary.js';
+import { getCaptures } from './captures.js';
 import { loadSettings, saveSettings } from './settings.js';
 
 const $ = (id) => document.getElementById(id);
@@ -20,20 +21,15 @@ async function init() {
   const settings = await loadSettings();
   for (const b of $('seg').querySelectorAll('button')) b.classList.toggle('active', b.dataset.f === settings.format);
 
-  let captures;
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const resp = await chrome.tabs.sendMessage(tab.id, { type: 'rh-get-captures' });
-    captures = (resp && resp.captures) || [];
-  } catch {
-    showEmpty('Open your Robinhood tab, reload it, then reopen this popup.');
+  const captures = await getCaptures();
+  if (captures.length === 0) {
+    showEmpty('Open a Robinhood tab and reload it, then reopen this popup.');
     return;
   }
-
   const result = normalize(captures);
   rows = enrich(result.rows, captures);
   if (rows.length === 0) {
-    showEmpty('No holdings captured yet — open Portfolio / Options / Crypto, then reopen.');
+    showEmpty('No holdings captured yet — open Portfolio / Options / Crypto, then reload.');
     return;
   }
 
@@ -48,11 +44,8 @@ async function init() {
     div.className = 'pe-row';
     const label = t === 'cash' ? TYPE_LABEL[t] : `${TYPE_LABEL[t]} · ${b.count}`;
     const val = (t !== 'cash' && b.value === 0 && s.unpriced) ? '—' : fmtUsd(b.value);
-    const left = document.createElement('span');
-    left.textContent = label;
-    const right = document.createElement('span');
-    right.className = 'v';
-    right.textContent = val;
+    const left = document.createElement('span'); left.textContent = label;
+    const right = document.createElement('span'); right.className = 'v'; right.textContent = val;
     div.append(left, right);
     rowsEl.appendChild(div);
   }
