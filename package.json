@@ -1,0 +1,12 @@
+{
+  "name": "portfolio-exporter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Export your Robinhood holdings (equities, options, crypto) with live prices to CSV/JSON/YAML — 100% local.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test",
+    "zip": "node scripts/zip.mjs"
+  }
+}
