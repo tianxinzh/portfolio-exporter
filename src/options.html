@@ -3,56 +3,50 @@
   <head>
     <meta charset="utf-8" />
     <title>Portfolio Exporter — Settings</title>
-    <style>
-      body { font: 14px system-ui, sans-serif; max-width: 640px; margin: 24px auto; padding: 0 16px; color: #222; }
-      h1 { font-size: 18px; }
-      h2 { font-size: 15px; margin-top: 22px; }
-      .field { margin: 14px 0; }
-      label.lbl { display: inline-block; min-width: 130px; font-weight: 600; vertical-align: top; }
-      select, input[type=text], input[type=number] { font-size: 14px; padding: 5px; }
-      .types label { font-weight: 400; margin-right: 14px; }
-      pre { background: #f6f6f6; border: 1px solid #ddd; padding: 10px; overflow: auto; max-height: 300px; font-size: 12px; white-space: pre; }
-      .hint { color: #666; font-size: 12px; }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Portfolio Exporter — Settings</h1>
+    <div class="opt-wrap">
+      <div class="pe-header">
+        <img src="../icons/icon32.png" width="22" height="22" alt="" />
+        <h1>Portfolio Exporter — Settings</h1>
+      </div>
 
-    <div class="field"><label class="lbl" for="format">Format</label>
-      <select id="format">
-        <option value="csv">CSV</option><option value="json">JSON</option><option value="yaml">YAML</option>
-      </select>
+      <div class="field"><label class="lbl" for="format">Format</label>
+        <select id="format">
+          <option value="csv">CSV</option><option value="json">JSON</option><option value="yaml">YAML</option>
+        </select>
+      </div>
+
+      <div class="field"><label class="lbl" for="preset">CSV columns</label>
+        <select id="preset">
+          <option value="tracker">tracker (SCHEMA order)</option>
+          <option value="fidelity">Fidelity-ish</option>
+          <option value="raw">raw (all fields)</option>
+        </select>
+        <div class="hint">Applies to CSV. JSON and YAML always export the full canonical shape.</div>
+      </div>
+
+      <div class="field"><label class="lbl" for="account">Account label</label>
+        <input id="account" type="text" placeholder="rh-main" />
+      </div>
+
+      <div class="field types"><label class="lbl">Include</label>
+        <label><input type="checkbox" id="t-equity" /> Equities</label>
+        <label><input type="checkbox" id="t-option" /> Options</label>
+        <label><input type="checkbox" id="t-crypto" /> Crypto</label>
+        <label><input type="checkbox" id="t-cash" /> Cash</label>
+      </div>
+
+      <div class="field"><label class="lbl" for="dust">Drop dust below</label>
+        <input id="dust" type="number" min="0" step="1" />
+        <span class="hint">market value (0 = keep everything)</span>
+      </div>
+
+      <h2 style="font-size:15px">Preview</h2>
+      <div id="preview-status" class="hint"></div>
+      <pre id="preview"></pre>
     </div>
-
-    <div class="field"><label class="lbl" for="preset">CSV columns</label>
-      <select id="preset">
-        <option value="tracker">tracker (SCHEMA order)</option>
-        <option value="fidelity">Fidelity-ish</option>
-        <option value="raw">raw (all fields)</option>
-      </select>
-      <div class="hint">Applies to CSV. JSON and YAML always export the full canonical shape.</div>
-    </div>
-
-    <div class="field"><label class="lbl" for="account">Account label</label>
-      <input id="account" type="text" placeholder="rh-main" />
-    </div>
-
-    <div class="field types"><label class="lbl">Include</label>
-      <label><input type="checkbox" id="t-equity" /> Equities</label>
-      <label><input type="checkbox" id="t-option" /> Options</label>
-      <label><input type="checkbox" id="t-crypto" /> Crypto</label>
-      <label><input type="checkbox" id="t-cash" /> Cash</label>
-    </div>
-
-    <div class="field"><label class="lbl" for="dust">Drop dust below</label>
-      <input id="dust" type="number" min="0" step="1" />
-      <span class="hint">market value (0 = keep everything)</span>
-    </div>
-
-    <h2>Preview</h2>
-    <div id="preview-status" class="hint"></div>
-    <pre id="preview"></pre>
-
     <script type="module" src="options.js"></script>
   </body>
 </html>
