@@ -145,15 +145,20 @@ function normalizeCrypto(captures) {
 // Settled cash from api.robinhood.com/accounts/ → one CASH row (amount @ $1, so
 // market_value = the cash balance). Summed across accounts if more than one.
 function normalizeCash(captures) {
-  let cash = null;
+  // accounts/ is fetched repeatedly; dedupe by account so cash isn't multiplied.
+  // Keep the latest value seen per account, then sum distinct accounts.
+  const byAccount = new Map();
   for (const c of captures) {
     if (!isAccounts(c.url) || !c || !c.body || !Array.isArray(c.body.results)) continue;
     for (const a of c.body.results) {
       const v = num(a.cash != null ? a.cash : a.portfolio_cash);
-      if (v != null) cash = (cash || 0) + v;
+      if (v == null) continue;
+      byAccount.set(a.account_number || a.account_id || a.url || 'default', v);
     }
   }
-  if (cash == null) return { rows: [] };
+  if (byAccount.size === 0) return { rows: [] };
+  let cash = 0;
+  for (const v of byAccount.values()) cash += v;
   const amt = Math.round(cash * 100) / 100;
   return { rows: [{
     symbol: 'CASH', account: 'rh-main', type: 'cash', direction: 'long',

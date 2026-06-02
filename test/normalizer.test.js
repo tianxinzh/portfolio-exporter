@@ -63,6 +63,21 @@ test('cash: settled cash from accounts/ becomes a CASH position (amount @ $1)', 
   });
 });
 
+test('cash: same account captured repeatedly is counted once (not summed)', () => {
+  const cap = { url: 'https://api.robinhood.com/accounts/?x', body: { results: [{ account_number: 'A1', cash: '2000.00' }] } };
+  const { rows } = normalize([cap, cap, cap]); // RH refetches accounts/ several times
+  assert.equal(rows.find((r) => r.type === 'cash').market_value, 2000);
+});
+
+test('cash: distinct accounts are summed once each', () => {
+  const caps = [
+    { url: 'https://api.robinhood.com/accounts/?a', body: { results: [{ account_number: 'A1', cash: '1000.00' }] } },
+    { url: 'https://api.robinhood.com/accounts/?a', body: { results: [{ account_number: 'A1', cash: '1000.00' }] } },
+    { url: 'https://api.robinhood.com/accounts/?b', body: { results: [{ account_number: 'A2', cash: '250.00' }] } },
+  ];
+  assert.equal(normalize(caps).rows.find((r) => r.type === 'cash').market_value, 1250);
+});
+
 test('empty captures → zero', () => {
   const { rows, counts } = normalize([]);
   assert.equal(rows.length, 0);
