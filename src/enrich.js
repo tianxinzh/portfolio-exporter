@@ -8,6 +8,19 @@ const pick = (...xs) => { for (const x of xs) if (x != null) return x; return nu
 const idFromUrl = (u) => (typeof u === 'string' ? u.replace(/\/+$/, '').split('/').pop() : null);
 const round2 = (n) => Math.round(n * 100) / 100;
 
+function refKeys(...refs) {
+  const keys = [];
+  for (const ref of refs) {
+    if (!ref) continue;
+    if (typeof ref === 'string') {
+      keys.push(ref);
+      const id = idFromUrl(ref);
+      if (id) keys.push(id);
+    }
+  }
+  return [...new Set(keys)];
+}
+
 function results(captures, pred) {
   const out = [];
   for (const c of captures) {
@@ -24,9 +37,12 @@ export function priceTables(captures) {
     if (q.symbol && p != null) equity.set(q.symbol, p);
   }
   for (const q of results(captures, isOptionQuotes)) {
-    const id = q.instrument_id || idFromUrl(q.instrument);
     const p = pick(num(q.adjusted_mark_price), num(q.last_trade_price), num(q.mark_price));
-    if (id && p != null) option.set(id, p);
+    if (p != null) {
+      for (const id of refKeys(q.instrument_id, q.id, q.option_id, q.instrument, q.option)) {
+        option.set(id, p);
+      }
+    }
   }
   for (const q of results(captures, isForexQuotes)) {
     const p = pick(num(q.mark_price), num(q.bid_price));

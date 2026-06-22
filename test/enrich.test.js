@@ -29,6 +29,16 @@ test('option (short): negative market value (liability) + loss when price rises'
   assert.equal(r.unrealized_pnl, -600);
 });
 
+test('option: joins quote when marketdata uses id instead of instrument_id', () => {
+  const caps = [{ url: 'https://api.robinhood.com/marketdata/options/?ids=x', body: { results: [
+    { id: 'opt-by-id', adjusted_mark_price: '2.50' },
+  ] } }];
+  const [r] = enrich([{ symbol: 'TSLA P250', type: 'option', direction: 'long', option_id: 'opt-by-id', quantity: 3, avg_cost: 1.25, multiplier: 100, last_price: null }], caps);
+  assert.equal(r.last_price, 2.5);
+  assert.equal(r.market_value, 750);
+  assert.equal(r.unrealized_pnl, 375);
+});
+
 test('crypto: join by currency_pair_id', () => {
   const [r] = enrich([{ symbol: 'BTC', type: 'crypto', currency_pair_id: 'pair-btc', quantity: 0.1, avg_cost: 40000, multiplier: 1, last_price: null }], quoteCaptures);
   assert.equal(r.last_price, 50000);
